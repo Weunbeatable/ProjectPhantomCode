@@ -52,6 +52,10 @@ public class PlayerTauntState : PlayerBaseState
             
             ReturnToLocomotion();
         }
+        Vector3 fwd = stateMachine.characterController.transform.TransformDirection(Vector3.forward);
+
+        if (Physics.Raycast(stateMachine.characterController.transform.position, fwd, 10))
+            Debug.Log("There is something in front of the object!");
     }
 
   

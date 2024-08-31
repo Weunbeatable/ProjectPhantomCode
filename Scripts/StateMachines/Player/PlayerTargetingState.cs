@@ -7,7 +7,6 @@ public class PlayerTargetingState : PlayerBaseState
 {
     public static event Action OnTriggerConfusion;
     public static event Action<Transform> OnTriggerLockOnIcon;
-    public static event Action OnTurnOffLockOnIcon;
 
     private readonly int TargetingBlendTreeHash = Animator.StringToHash("TargetingBlendTree");
 
@@ -86,14 +85,14 @@ public class PlayerTargetingState : PlayerBaseState
         }
         else
         {
-            if (stateMachine.InputReader.LeftStanceEnabled == true)
-            {
-                stateMachine.targeter.CheckForTargetOnLeft();
-                return;
-            }
-            if ( stateMachine.InputReader.UpStanceEnabled == true)
+            if (stateMachine.InputReader.LookValue.x > 0f)
             {
                 stateMachine.targeter.CheckForTargetOnRight();
+                return;
+            }
+            if ( stateMachine.InputReader.LookValue.x < 0f)
+            {
+                stateMachine.targeter.CheckForTargetOnLeft();
                 return;
             }
 
@@ -124,8 +123,7 @@ public class PlayerTargetingState : PlayerBaseState
     }
 
     public override void Exit()
-    {
-        OnTurnOffLockOnIcon?.Invoke();
+    {       
         foreach (GameObject dodge in stateMachine.dodgeObjects)
         {
             dodge.SetActive(false);

@@ -25,6 +25,8 @@ public class StaggerState :EnemyBaseState
 
     public override void Enter()
     {
+        stateMachine.navMesh.enabled = false;
+        stateMachine.health.onTakeDamage += HandleTakeDamage;
         FacePlayer();
         WeaponTypeImpactAnimation(EnemyImpactMeleeHash, EnemyImpactWeaponHash, CrossFadeDuration);
         stateMachine.Animator.applyRootMotion = true;
@@ -45,7 +47,11 @@ public class StaggerState :EnemyBaseState
     }
     public override void Exit()
     {
-        stateMachine.Animator.applyRootMotion = false;
+      //  stateMachine.Animator.applyRootMotion = false;
     }
-
+    private void HandleTakeDamage()
+    {
+        //stateMachine.Animator.applyRootMotion = false;
+        stateMachine.LoadStates();
+    }
 }

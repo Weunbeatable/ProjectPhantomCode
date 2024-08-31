@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using PFF.UI;
 public class SoundEffects : MonoBehaviour
 {
     public AudioClip fighterMode;
@@ -16,7 +16,7 @@ public class SoundEffects : MonoBehaviour
     public AudioSource leftLegSource;
     public AudioSource weaponSource;
     public AudioClip DashEnded;
-
+    private float pitchRange;
     [Header("punching Audio")]
     public AudioClip lightPunchA;
     public AudioClip lightPunchB;
@@ -100,46 +100,66 @@ public class SoundEffects : MonoBehaviour
     } 
     public void weaponAudio()
     {
+        pitchRange = UnityEngine.Random.Range(0.98f, 1.02f);
+        playerSource.pitch =  pitchRange;
         playerSource.PlayOneShot(PhantomWeapon);
     }
     public void LightPunchAAudio()
     {
+        pitchRange = UnityEngine.Random.Range(0.98f, 1.02f);
+        playerSource.pitch = pitchRange;
         playerSource.PlayOneShot(lightPunchA);
     }
     public void LightPunchBAudio()
     {
+        pitchRange = UnityEngine.Random.Range(0.98f, 1.02f);
+        playerSource.pitch = pitchRange;
         playerSource.PlayOneShot(lightPunchB);
     }
 
     public void HeavyPunchAAudio()
     {
+        pitchRange = UnityEngine.Random.Range(0.98f, 1.02f);
+        playerSource.pitch = pitchRange;
         playerSource.PlayOneShot(heavyPunchA);
     }
     public void HeavyPunchBAudio()
     {
+        pitchRange = UnityEngine.Random.Range(0.98f, 1.02f);
+        playerSource.pitch = pitchRange;
         playerSource.PlayOneShot(heavyPunchB);
     }
 
     public void LightKickAAudio()
     {
+        pitchRange = UnityEngine.Random.Range(0.98f, 1.02f);
+        playerSource.pitch = pitchRange;
         playerSource.PlayOneShot(lightKickA);
     }
     public void HeavyKickAudio()
     {
+        pitchRange = UnityEngine.Random.Range(0.98f, 1.02f);
+        playerSource.pitch = pitchRange;
         playerSource.PlayOneShot(heavyKickA);
     }
 
     public void Grunt1()
     {
+        pitchRange = UnityEngine.Random.Range(0.98f, 1.02f);
+        playerSource.pitch = pitchRange;
         playerSource.PlayOneShot(AttackEffortA);
     }
     public void PunchingEffort()
     {
+        pitchRange = UnityEngine.Random.Range(0.98f, 1.02f);
+        playerSource.pitch = pitchRange;
         playerSource.PlayOneShot(PunchEffort);
     }
 
     private void WeaponDamage_onParried(object sender, EventArgs e)
     {
+        pitchRange = UnityEngine.Random.Range(0.98f, 1.02f);
+        playerSource.pitch = pitchRange;
         playerSource.PlayOneShot(parryAudio);
     }
 
@@ -147,6 +167,8 @@ public class SoundEffects : MonoBehaviour
     {
         if(heavyBass != null)
         {
+            pitchRange = UnityEngine.Random.Range(0.98f, 1.02f);
+            playerSource.pitch = pitchRange;
             playerSource.PlayOneShot(heavyBass);
         }
     }

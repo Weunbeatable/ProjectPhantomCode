@@ -149,7 +149,16 @@ public class PlayerStateMachine : StateMachine
     private const float CrossFadeDuration = 0.1f;
     private string previousStance { set; get; }
     public event Action UsingAssassinStance, UsingFighterStance, UsingGunStance, UsingHeavySwordStance;
+    [SerializeField] public List<Action> actionList = new List<Action>();
     // TODO: Implement Taunt - should be able to transition into  jump, walk and run states; 
+
+    private void Awake()
+    {
+        actionList.Add(FighterMode);
+        actionList.Add(GunMode);
+        actionList.Add(GreatSwordMode);
+        actionList.Add(AssasinMode);
+    }
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Confined;
@@ -161,8 +170,6 @@ public class PlayerStateMachine : StateMachine
         fighter.GetComponent<TestPhantomFighter>();
         previousStance = Animator.runtimeAnimatorController.name;
         currentActiveStance = Animator.runtimeAnimatorController.name;
-
-
     }
 
     private void OnEnable()
@@ -187,14 +194,14 @@ public class PlayerStateMachine : StateMachine
 
     private void FixedUpdate()
     {
-        foreach (WeaponDamage point in updatestate)
+       /* foreach (WeaponDamage point in updatestate)
         {
             if (point.GetClosestPoint() != null)
             {
                 ClosestImpactPoint = point.GetClosestPoint();
                 return;
             }
-        }
+        }*/
     }
 
     //TODO

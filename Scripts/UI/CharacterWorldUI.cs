@@ -6,55 +6,58 @@ using TMPro;
 using UnityEngine.UI;
 using System;
 
-public abstract class CharacterWorldUI : MonoBehaviour
+namespace PFF.UI
 {
-    [SerializeField] protected Image healthBarImage;
-    [SerializeField] protected Health healthSystem;
-    [SerializeField] protected GameObject healthBarContainer;
-
-    public CharacterWorldUI(Image barImage, Health health, GameObject healthBarContainer)
+    public abstract class CharacterWorldUI : MonoBehaviour
     {
-        healthBarImage = barImage;
-        healthSystem = health;
-        this.healthBarContainer = healthBarContainer;
-    }
+        [SerializeField] protected Image healthBarImage;
+        [SerializeField] protected Health healthSystem;
+        [SerializeField] protected GameObject healthBarContainer;
 
-    protected virtual void Start()
-    {
-        healthSystem.onTakeDamage += HealthSystem_onTakeDamage;
-    }
+        public CharacterWorldUI(Image barImage, Health health, GameObject healthBarContainer)
+        {
+            healthBarImage = barImage;
+            healthSystem = health;
+            this.healthBarContainer = healthBarContainer;
+        }
 
-    private void OnEnable()
-    {
-        PauseMenu1.onMenuPaused += PauseMenu1_onMenuPaused;
-        PauseMenu1.onMenuClosed += PauseMenu1_onMenuClosed;
-    }
+        protected virtual void Start()
+        {
+            healthSystem.onTakeDamage += HealthSystem_onTakeDamage;
+        }
 
-    private void OnDisable()
-    {
-        PauseMenu1.onMenuPaused -= PauseMenu1_onMenuPaused;
-        PauseMenu1.onMenuClosed -= PauseMenu1_onMenuClosed;
-    }
+        private void OnEnable()
+        {
+            PauseMenu1.onMenuPaused += PauseMenu1_onMenuPaused;
+            PauseMenu1.onMenuClosed += PauseMenu1_onMenuClosed;
+        }
 
-    private void PauseMenu1_onMenuPaused(object sender, EventArgs e)
-    {
-        healthBarContainer.SetActive(false);
-    }
+        private void OnDisable()
+        {
+            PauseMenu1.onMenuPaused -= PauseMenu1_onMenuPaused;
+            PauseMenu1.onMenuClosed -= PauseMenu1_onMenuClosed;
+        }
 
-    private void PauseMenu1_onMenuClosed(object sender, EventArgs e)
-    {
-        healthBarContainer.SetActive(true);
-    }
-    private void HealthSystem_onTakeDamage()
-    {
-        UpdateHeatlhBar();
-    }
+        private void PauseMenu1_onMenuPaused(object sender, EventArgs e)
+        {
+            healthBarContainer.SetActive(false);
+        }
 
-    protected void UpdateHeatlhBar()
-    {
-        healthBarImage.fillAmount = healthSystem.GetNormalizedHealth();
+        private void PauseMenu1_onMenuClosed(object sender, EventArgs e)
+        {
+            healthBarContainer.SetActive(true);
+        }
+        private void HealthSystem_onTakeDamage()
+        {
+            UpdateHeatlhBar();
+        }
+
+        protected void UpdateHeatlhBar()
+        {
+            healthBarImage.fillAmount = healthSystem.GetNormalizedHealth();
+        }
+
+
+
     }
-
-   
-
 }

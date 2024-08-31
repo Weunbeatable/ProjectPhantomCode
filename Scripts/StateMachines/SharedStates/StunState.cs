@@ -27,6 +27,7 @@ public class StunState : EnemyBaseState
 
     public override void Enter()
     {
+        stateMachine.navMesh.enabled = false;
         stateMachine.health.onTakeDamage += HandleTakeDamage;
         FacePlayer();
         WeaponTypeImpactAnimation(EnemyImpactMeleeHash, EnemyImpactWeaponHash, CrossFadeDuration);
@@ -52,13 +53,13 @@ public class StunState : EnemyBaseState
     }
     public override void Exit()
     {
-        stateMachine.Animator.applyRootMotion = false;
+       // stateMachine.Animator.applyRootMotion = false;
         stateMachine.health.onTakeDamage -= HandleTakeDamage;
     }
 
     private void HandleTakeDamage()
     {
-        stateMachine.Animator.applyRootMotion = false;
+        //stateMachine.Animator.applyRootMotion = false;
         stateMachine.LoadStates();
     }
 }

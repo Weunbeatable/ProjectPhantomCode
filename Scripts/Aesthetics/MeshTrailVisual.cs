@@ -177,7 +177,7 @@ public class MeshTrailVisual : MonoBehaviour
     private void OnDisable()
     {
         PlayerCombatTimers.onCleanupDash -= PlayerStateMachine_onCleanupDash;
-        PlayerBaseState.onMimicingCommands += PlayerBaseState_onMimicingCommands;
+        PlayerBaseState.onMimicingCommands -= PlayerBaseState_onMimicingCommands;
     }
     private void OnDestroy()
     {

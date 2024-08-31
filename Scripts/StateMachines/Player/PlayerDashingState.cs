@@ -7,6 +7,7 @@ using System;
 public class PlayerDashingState : PlayerBaseState
 {
     public static event Action<bool> OnActivateMeshTrail;
+    public static event Action OnDashHasEnded;
     private readonly int DashingBlendTreeHash = Animator.StringToHash("placeholderDash");
 
     private readonly int DashForwardHash = Animator.StringToHash("GroundDash");
@@ -107,7 +108,7 @@ public class PlayerDashingState : PlayerBaseState
         if (stateMachine.dashCoolDownTimer > 0)
             stateMachine.dashCoolDownTimer -= deltaTime;
 
-        if ((stateMachine.wallLeft || stateMachine.wallRight) && MinimumWalllRunHeight() && stateMachine.InputReader.MovementValue.y > 0 && !stateMachine.exitingWall)
+        if (stateMachine.characterController.isGrounded == false && (stateMachine.wallLeft || stateMachine.wallRight) && MinimumWalllRunHeight() && stateMachine.InputReader.MovementValue.y > 0 && !stateMachine.exitingWall)
         {
 
            // Move(stateMachine.InputReader.MovementValue, deltaTime);
@@ -129,6 +130,7 @@ public class PlayerDashingState : PlayerBaseState
     {
         isCurrentlyDashing = false;
         OnActivateMeshTrail?.Invoke(isCurrentlyDashing);
+        OnDashHasEnded?.Invoke();
         stateMachine.FreeLookMovementSpeed = applyDashToMovementSpeed * 4f;
         Debug.Log("freelook speed is " + stateMachine.FreeLookMovementSpeed);
     }

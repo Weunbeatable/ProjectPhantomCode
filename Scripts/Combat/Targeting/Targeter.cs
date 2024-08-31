@@ -9,6 +9,7 @@ using TMPro;
 public class Targeter : MonoBehaviour
 {
     public static event Action<Transform, Transform> OnUpdateLockOnIcon;
+    public static event Action OnTurnOffLockOnIcon;
 
 
     [SerializeField] private CinemachineTargetGroup cineTargetGroup; // uses cinemacihine (quick actions refactor)
@@ -132,6 +133,7 @@ public class Targeter : MonoBehaviour
 
         cineTargetGroup.RemoveMember(currentTarget.transform);
         finisherTargetGroup.RemoveMember(currentTarget.transform);
+        OnTurnOffLockOnIcon?.Invoke();
         currentTarget = null;
     }
 
@@ -257,16 +259,14 @@ public class Targeter : MonoBehaviour
 
                 Debug.Log("the signed angle of the next closest target is " + targetsAngle);
 
-                float closeDistanceCheck = Vector3.Distance( currentTarget.transform.position, viewPos);
+                float closeDistanceCheck = Vector3.Distance( currentTarget.transform.forward, viewPos);
               /*  if (viewPos.x < 0 || viewPos.x > 1 || viewPos.y < 0 || viewPos.y > 1)
                 {
                     continue;
                 }*/
-                if (viewPos.x > 0.5f && viewPos.x < 1)
+                if (viewPos.x >= 0.5f && viewPos.x < 1 && closeDistanceCheck < closestTargetDistance)
                 {
-                    if ( target != currentTarget && closeDistanceCheck < closestTargetDistance)
-                    {
-                        closestTarget = target;
+                 closestTarget = target;
                         //closestTargetDistance = closeDistanceCheck;
                         if (closestTarget == null) { return; }
                         OnUpdateLockOnIcon?.Invoke(currentTarget.transform, closestTarget.transform);
@@ -281,7 +281,7 @@ public class Targeter : MonoBehaviour
                         cineTargetGroup.AddMember(currentTarget.transform, 1f, 2f);
                         finisherTargetGroup.AddMember(currentTarget.transform, 1f, 1f);
                         return;
-                    }
+                    
                     
                     Debug.Log("Name of the other enemy is " + target.name);
                     
@@ -311,15 +311,14 @@ public class Targeter : MonoBehaviour
                 Debug.Log("your position is " + this.transform.position);
                 Debug.Log("the signed angle of the next closest target is " + targetsAngle);
 
-                float closeDistanceCheck = Vector3.Distance( currentTarget.transform.position, viewPos);
+                float closeDistanceCheck = Vector3.Distance( currentTarget.transform.forward, viewPos);
               /*  if (viewPos.x < 0 || viewPos.x > 1 || viewPos.y < 0 || viewPos.y > 1)
                 {
                     continue;
                 }*/
-                if(viewPos.x < 0.5f && viewPos.x > 0f)
+                if(viewPos.x < 0.5f && viewPos.x >= 0f && closeDistanceCheck < closestTargetDistance)
                 {
-                    if ( target != currentTarget && closeDistanceCheck < closestTargetDistance)
-                    {
+                   
                         closestTarget = target;
                         //closestTargetDistance = closeDistanceCheck;
                         if (closestTarget == null) { return; }
@@ -350,4 +349,4 @@ public class Targeter : MonoBehaviour
           
         }
     }
-}
+

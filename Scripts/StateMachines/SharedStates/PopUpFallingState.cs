@@ -21,6 +21,7 @@ public class PopUpFallingState : EnemyBaseState
 
     public override void Enter()
     {
+        stateMachine.navMesh.enabled = false;
        stateMachine.health.onTakeDamage += HandleTakeDamage;
         momentum = stateMachine.characterController.velocity;
         momentum.y = 0f;
@@ -35,7 +36,7 @@ public class PopUpFallingState : EnemyBaseState
     public override void Tick(float deltaTime)
     {
         //Debug.Log("current state is " + stateMachine.characterController.isGrounded);
-         Move(momentum, deltaTime/1.454f);
+         Move(momentum, deltaTime/0.5f);
 
         float normalizedTime = GetNormalizedTime(stateMachine.Animator, "hitFalling");
         if (normalizedTime < 1f) // if greater than previous do something. if greater than 1 animation has finished, may remove the && for animation cancel

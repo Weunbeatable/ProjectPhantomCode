@@ -13,20 +13,23 @@ public class EnemyIdleState : EnemyBaseState
 
     public override void Enter()
     {
-        
+        if(stateMachine.navMesh.enabled == false) { stateMachine.enabled = true; }
         stateMachine.Animator.CrossFadeInFixedTime(LocomotionBlendTreeHash, CrossFadeDuration);
 
     }
 
     public override void Tick(float deltaTime)
     {
+       
         Move(deltaTime);
         if (IsInChasingRange())
         {           
            stateMachine.SwitchState(new EnemyChasingState(stateMachine));
             return;
         }
-        FacePlayer();
+        // should only face player if in suspicion range. 
+        if (IsInSuspicionRange()) { FacePlayer(); }
+       
         stateMachine.Animator.SetFloat(SpeedHash, 0f, AnimatorDampTime, deltaTime);
     }
 
@@ -34,4 +37,5 @@ public class EnemyIdleState : EnemyBaseState
     {
      
     }
+   
 }

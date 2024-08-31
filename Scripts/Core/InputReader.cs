@@ -13,7 +13,8 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
     public Vector2 MovementValue { get; private set; }
     public Vector2 LookValue { get; private set; }
 
-    public event Action JumpEvent, DodgeEvent, TargetEvent, TauntEvent, FinishEvent, PauseEvent;
+    public event Action JumpEvent, DodgeEvent, TargetEvent, TauntEvent, FinishEvent, PauseEvent,
+        RightSpecialEvent, RightSpecialHoldEvent;
 
     private Controls controls;
 
@@ -118,6 +119,8 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
     {
         if (context.interaction is TapInteraction)
         {
+            if (!context.performed) { return; }
+            RightSpecialEvent?.Invoke(); // checking for subscribers to jump event then invoking it.
             if (context.started)
             {
                 isLeftSpecial = true;
@@ -132,7 +135,9 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
         }
         else if (context.interaction is HoldInteraction)
         {
-            if (context.performed)
+            if (!context.performed) { return; }
+            RightSpecialHoldEvent?.Invoke(); // checking for subscribers to jump event then invoking it.
+           /* if (context.performed)
             {
                 isLeftSpecialHold = true;
                // Debug.Log("hold interaction started");
@@ -141,7 +146,7 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
             {
                 isLeftSpecialHold = false;
               //  Debug.Log("hold interaction ended");
-            }
+            }*/
         }
     }
 
@@ -149,15 +154,17 @@ public class InputReader : MonoBehaviour, Controls.IPlayerActions
     {
         if (context.interaction is TapInteraction)
         {
+            if (!context.performed) { return; }
+            RightSpecialEvent?.Invoke(); // checking for subscribers to jump event then invoking it.
             if (context.started)
             {
                 isRightSpecial = true;
-                Debug.Log("tap interaction started");
+               // Debug.Log("tap interaction started");
             }
             else if (context.canceled || context.performed && context.time > 0.5f)
             {
                 isRightSpecial = false;
-                Debug.Log("Tap interaction ended");
+             //   Debug.Log("Tap interaction ended");
             }
            
         }

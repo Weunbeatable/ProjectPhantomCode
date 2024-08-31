@@ -28,10 +28,10 @@ public abstract class BaseAbilitySystem : MonoBehaviour, IAbilites, IPointerClic
     protected bool isAbilityInUse;
     protected Action onAbilityUseComplete;
     [SerializeField] protected string abilityName;
-    [SerializeField] protected Image abilityIcon;
+    [SerializeField] protected Sprite abilityIcon;
 
-    private bool istapOtion; 
-    private bool isholdOption;
+    private static bool istapOtion; 
+    private static bool isholdOption;
 
     public delegate void IAbilitesDelegate(IAbilites ability); // delegate allows flexibility for passing Iabilites interface function to UI manager
     IAbilitesDelegate delegateAbilityCallback; // setting up callback as I have to account for controller and m&k inputs
@@ -44,7 +44,7 @@ public abstract class BaseAbilitySystem : MonoBehaviour, IAbilites, IPointerClic
     }
     public string GetAbilityStringName() => abilityName;
 
-    public Sprite GetAbilityImageIcon() => abilityIcon.sprite;
+    public Sprite GetAbilityImageIcon() => abilityIcon;
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -56,10 +56,13 @@ public abstract class BaseAbilitySystem : MonoBehaviour, IAbilites, IPointerClic
 
     public abstract void UseAbility();
 
-    public bool GetTapStatus() => istapOtion;
+    public static bool GetTapStatus() => istapOtion;
 
-    public bool GetHoldStatus() => isholdOption;
+    public static bool GetHoldStatus() => isholdOption;
 
+    public bool SetTap() { istapOtion = !istapOtion; return istapOtion; }
+
+    public bool SetHold() { isholdOption = !isholdOption; return isholdOption; }
     public bool SetTapStatus(bool tapStatus) => istapOtion = tapStatus;
 
     public bool SetHoldStatus(bool holdStatus) => isholdOption = holdStatus;

@@ -99,14 +99,14 @@ public class PlayerAttackingState : PlayerBaseState
 
         }
 
-        Debug.Log("Attackname is " + attack.AnimationName);
+      //  Debug.Log("Attackname is " + attack.AnimationName);
         return AttackIndex;
          
     }
 
     public override void Enter()
     {
-        //MoveToEnemy();
+       // MoveToEnemy();
         stateMachine.UpdateHitState();
         stateMachine.isStartingComboCounter = false;
         attackCounter = 0;
@@ -133,6 +133,7 @@ public class PlayerAttackingState : PlayerBaseState
             
             stateMachine.Animator.CrossFadeInFixedTime(attack.AnimationName, attack.TransitionDuration); // crossfade in fixed time is better than play so we get smootheranimations
             PhantomAttackHandler(attack);
+            MoveTowardsTarget();
             //OnTarget();
             // Debug.Log("current animation controller is " + stateMachine.Animator.runtimeAnimatorController.name);
 
@@ -294,23 +295,14 @@ public class PlayerAttackingState : PlayerBaseState
 
     void MoveTowardsTarget()
     {
-        Vector3 offset = new Vector3(1f, 0f, 1f);
-        Vector3 controllerInput = new Vector3(stateMachine.InputReader.MovementValue.x, 0, stateMachine.InputReader.MovementValue.y);
         if (stateMachine.targeter.currentTarget == null && stateMachine.InputReader.MovementValue == Vector2.zero)
         {
-            stateMachine.characterController.transform.rotation = Quaternion.LookRotation(stateMachine.transform.forward);
+            stateMachine.characterController.transform.rotation = Quaternion.LookRotation(stateMachine.characterController.transform.forward);
             return;
         }
-        else if(stateMachine.targeter.currentTarget == null && stateMachine.InputReader.MovementValue!= Vector2.zero)
+        else if (stateMachine.targeter.currentTarget == null && stateMachine.InputReader.MovementValue != Vector2.zero)
         {
             stateMachine.characterController.transform.rotation = Quaternion.LookRotation(CalculateMovement());
-        }
-        else
-        {
-            stateMachine.characterController.transform.DORotate(stateMachine.targeter.currentTarget.transform.position, .1f);
-            stateMachine.characterController.transform.DOLookAt(stateMachine.targeter.currentTarget.transform.position, .1f);
-            
-            // stateMachine.characterController.transform.DOMove(stateMachine.targeter.currentTarget.transform.position - offset, .4f);
         }
     }
 

@@ -10,8 +10,16 @@ public class PlayerHangingState : PlayerBaseState
 
     private readonly int PlayerHangHash = Animator.StringToHash("HangIdle");
 
-    private const float CrossFadeDuration = 0.1f;
+    // hanging 
+    private readonly int PlayerLeftShimmyHash = Animator.StringToHash("shimmy_Left");
+    private readonly int PlayerRightShimmyHash = Animator.StringToHash("shimmy_Right");
 
+    // braced shimmy
+    private readonly int PlayerBracedLeftShimmyHash = Animator.StringToHash("braced_Shimmy_Left");
+    private readonly int PlayerBracedRightShimmyHash = Animator.StringToHash("braced_Shimmy_Right");
+
+    private const float CrossFadeDuration = 0.1f;
+    private const float AnimatorDampTime = 0.1f;
 
     public PlayerHangingState(PlayerStateMachine stateMachine, Vector3 ledgeForward, Vector3 closestPoint) : base(stateMachine) // switching to this states requires the vector 3 variahles to be passed into the constructor
     {
@@ -22,7 +30,7 @@ public class PlayerHangingState : PlayerBaseState
 
     public override void Enter()
     {
-        stateMachine.transform.rotation = Quaternion.LookRotation(ledgeForward, Vector3.up); // in order to face leldge;
+       // stateMachine.transform.rotation = Quaternion.LookRotation(ledgeForward, Vector3.up); // in order to face leldge;
         stateMachine.characterController.enabled = false;
         stateMachine.transform.position = closestPoint - (stateMachine.ledgeDetector.transform.position - stateMachine.transform.position); // position of hands - positon of player
         stateMachine.characterController.enabled = true;
@@ -35,6 +43,10 @@ public class PlayerHangingState : PlayerBaseState
 
     public override void Tick(float deltaTime)
     {
+        if(stateMachine.InputReader.MovementValue.x == 0f && stateMachine.InputReader.MovementValue.y == 0f)
+        {
+            stateMachine.Animator.SetFloat(PlayerHangHash, 0f, AnimatorDampTime, deltaTime);
+        }
        if(stateMachine.InputReader.MovementValue.y < 0f)
         {
             stateMachine.characterController.Move(Vector3.zero);
@@ -45,6 +57,21 @@ public class PlayerHangingState : PlayerBaseState
         {
            
             stateMachine.SwitchState(new PlayerPullUpState(stateMachine));
+        }
+
+        // Check to see if there is a place for feet to hang on
+        // if there is something close to feet, use braced shimmy, 
+        // if not use hanging ledge grab. 
+        if(stateMachine.InputReader.MovementValue.x < 0f)
+        {
+            //stateMachine.characterController.Move(Vector3.right);
+            stateMachine.Animator.applyRootMotion = true;
+            stateMachine.Animator.CrossFadeInFixedTime(PlayerLeftShimmyHash, CrossFadeDuration);
+        }
+        if(stateMachine.InputReader.MovementValue.x > 0f)
+        {
+            stateMachine.Animator.applyRootMotion = true;
+            stateMachine.Animator.CrossFadeInFixedTime(PlayerRightShimmyHash, CrossFadeDuration);
         }
     }
 

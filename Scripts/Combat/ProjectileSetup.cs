@@ -124,7 +124,8 @@ public class ProjectileSetup : MonoBehaviour
                 kunai.transform.rotation = Quaternion.LookRotation(facing); // creating a vector 3 to a quaternion
             }*/
             
-            kunai.GetComponent<Rigidbody>().AddForce(kunai.transform.position * 320 * Time.deltaTime, ForceMode.Force);
+            kunai.GetComponent<Rigidbody>().AddForce(kunai.transform.position * 400 * Time.deltaTime, ForceMode.VelocityChange);
+            //
            if(kunai.activeSelf == true)
             {
                 kunai.transform.Rotate(0, 180, 0);

@@ -332,4 +332,8 @@ public class PlayerHeavyAttackingState : PlayerBaseState
             return;
         }
     }
+    protected override void PhantomAttackHandler(Attack attack)
+    {
+        base.PhantomAttackHandler(attack);
+    }
 }

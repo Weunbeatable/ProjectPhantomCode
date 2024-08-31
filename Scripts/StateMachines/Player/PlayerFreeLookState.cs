@@ -46,7 +46,7 @@ public class PlayerFreeLookState : PlayerBaseState, ICriticalCondition
     {
 
         stateMachine.targeter.Cancel();
-        Debug.Log("Current stat is the " + stateMachine + " State");
+       // Debug.Log("Current stat is the " + stateMachine + " State");
        // originalFreelookMovementSpeed = MathF.Abs(stateMachine.characterController.velocity.z);
         stateMachine.combatModifiers.modifiedKnockBack = 0f;
         stateMachine.InputReader.TargetEvent += Ontarget;
@@ -141,7 +141,10 @@ public class PlayerFreeLookState : PlayerBaseState, ICriticalCondition
             CriticalCondition(deltaTime);
             stateMachine.Animator.SetBool("Critical", true);
         }
-
+        if(stateMachine.characterController.isGrounded == false)
+        {
+            stateMachine.SwitchState(new PlayerFallingState(stateMachine));
+        }
 
         FaceMovementDirection(movement, deltaTime);
     }

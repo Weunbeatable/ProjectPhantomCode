@@ -29,65 +29,72 @@ public class PhantomStealAbility : phantomAbilites, IAbilites
 
     bool isStealActive;
     private bool shouldGaurd = false;
-
+    public static bool istapped { set; get; }
     public override void Awake()
     {
         base.Awake();
-       // Debug.Log("host name is " + GetHostAnimator().name);
-     //   Debug.Log("ghost name is "+ GetGhostAnimator().name);
-    
     }
     public override void Start()
     {
        base.Start();
-     //   Debug.Log("loaded controller is " +GetFighterController().name);
         stolenAttackUseCounter = 3;
     }
 
     private void OnEnable()
     {
         WeaponDamage.onParried += WeaponDamage_onParried;
+        GetPlayerInputs().RightSpecialEvent += PhantomStealAbility_RightSpecialEvent;
+        GetPlayerInputs().RightSpecialHoldEvent += PhantomStealAbility_RightSpecialHoldEvent;
     }
+
+  
+
     private void OnDisable()
     {
         WeaponDamage.onParried -= WeaponDamage_onParried;
+        GetPlayerInputs().RightSpecialEvent -= PhantomStealAbility_RightSpecialEvent;
+        GetPlayerInputs().RightSpecialHoldEvent -= PhantomStealAbility_RightSpecialHoldEvent;
         isStealActive = false;
+    }
+    private void PhantomStealAbility_RightSpecialEvent()
+    {
+            SetGhostAnimator(GetCombatModifier().stolenAnimationController);
+            istapped = !istapped;
+            ApproachTarget();
+            //  GetPhantomContainer().gameObject.SetActive(true);
+
+            GetGhostAnimator().Play(ghostAttackHash);
+            ghostAttackHash = 0;
+        if (GetGhostAnimator().GetCurrentAnimatorStateInfo(0).normalizedTime > 1f)
+        {
+
+            //  GetPhantomContainer().gameObject.SetActive(false);
+            SetTapStatus(false);
+
+            //  ghostAttackHash = 0;
+        }
+        if (ghostAttackHash == 0)
+        {
+            GetCombatModifier().stolenAnimationController = null;
+        }
+    }
+
+    private void PhantomStealAbility_RightSpecialHoldEvent()
+    {
+        throw new NotImplementedException();
     }
     // Update is called once per frame
     void Update()
     {
             ghostAttackHash = GetCombatModifier().combatClipHash;
-      //  Debug.Log("ghost hash value is " +  ghostAttackHash);
-        TurnPhantomOnandOff();
+        //  Debug.Log("ghost hash value is " +  ghostAttackHash);
+        if (GetPhantomContainer() != null)
+        {
+            TurnPhantomOnandOff();
+        }
         if (GetCombatModifier().stolenAnimationController == null || ghostAttackHash == 0)
         {
             return;
-        }
-        else
-        {
-            if (GetTapStatus() == true)
-            {
-                SetGhostAnimator(GetCombatModifier().stolenAnimationController);
-
-                ApproachTarget();
-              //  GetPhantomContainer().gameObject.SetActive(true);
-
-                GetGhostAnimator().Play(ghostAttackHash);
-                ghostAttackHash = 0;
-            }
-            if (GetGhostAnimator().GetCurrentAnimatorStateInfo(0).normalizedTime > 1f)
-            {
-
-              //  GetPhantomContainer().gameObject.SetActive(false);
-                SetTapStatus(false);
-
-                //  ghostAttackHash = 0;
-            }
-            if (ghostAttackHash == 0)
-            {
-                GetCombatModifier().stolenAnimationController = null;
-            }
-
         }
 
         Debug.Log("is something playing " + GetGhostAnimator().GetCurrentAnimatorStateInfo(0));
@@ -166,9 +173,9 @@ public class PhantomStealAbility : phantomAbilites, IAbilites
     {
         
         // Find the dot product of the enemy and spawn behind him. Play an animation
-        Vector3 directionBehind = GetTargeter().currentTarget.transform.position;
-        directionBehind.y += 0.6f;
-        directionBehind.z -= 1f;
+        Vector3 directionBehind = GetTargeter().currentTarget.transform.position.normalized;
+        directionBehind.y -= 0.4f;
+        directionBehind.z -= 2.2f;
 
 
         this.transform.position = directionBehind; // Set character position to offset otherwise Phantom will be too close causing weird issues and collisons

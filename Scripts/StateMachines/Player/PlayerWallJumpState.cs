@@ -26,16 +26,16 @@ public class PlayerWallJumpState : PlayerBaseState
 
     public override void Tick(float deltaTime)
     {
-        
-        
+
+        WallJump();
         var normalizedTime = GetNormalizedTime(stateMachine.Animator, "wallJumping") < 1f;
         if(GetNormalizedTime(stateMachine.Animator, "wallJumping") > 0.5f)
         {
-            stateMachine.forceReceiver.Reset();
+          /*  stateMachine.forceReceiver.Reset();
             stateMachine.forceReceiver.Jump(stateMachine.wallJumpUpForce);
             Vector3 sideToSide = new Vector3(stateMachine.characterController.velocity.x, 0f, stateMachine.InputReader.MovementValue.y);
-            Move(sideToSide, deltaTime);
-            WallJump();
+            Move(sideToSide, deltaTime);*/
+           
             Move(stateMachine.InputReader.MovementValue, deltaTime);
         }
         

@@ -22,6 +22,7 @@ public class PopUpStartState : EnemyBaseState
 
     public override void Enter()
     {
+        stateMachine.navMesh.enabled = false;
         stateMachine.health.onTakeDamage += HandleTakeDamage;
         momentum = stateMachine.characterController.velocity;
         //momentum.y = 0f;
@@ -34,7 +35,7 @@ public class PopUpStartState : EnemyBaseState
     {
         float normalizedTime = GetNormalizedTime(stateMachine.Animator, "PopUP");
         //Debug.Log("current velocity is " + stateMachine.characterController.velocity);
-        Move(momentum, deltaTime);
+        Move(momentum, deltaTime * 0.5f);
         // attack = GameObject.FindGameObjectWithTag("Player").GetComponent<Attack>();
         // duration = attack.hitStunDuration;
         duration -= deltaTime;

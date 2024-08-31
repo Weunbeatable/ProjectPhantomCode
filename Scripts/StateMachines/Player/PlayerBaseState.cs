@@ -2,6 +2,8 @@ using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+
 //using UnityEditorInternal;
 using UnityEngine;
 
@@ -261,7 +263,7 @@ public abstract class PlayerBaseState : State
                                                                // invoke the event here  with this protected virtual method in order to have consistency
                                                                // in calling for the visual change to be made, may need a boolean check? 
     {
-        
+
         if (PhantomCombatMimicAbility.istapped == true)
         {
             if (PhantomCombatMimicAbility.playPhantomAttacks.Count <= 10)
@@ -272,19 +274,22 @@ public abstract class PlayerBaseState : State
                 PhantomCombatMimicAbility.playPhantomAttacks.Add(attack.AnimationName);
                 stateMachine.effects.PlayMultipleStoringEffect();
             }
-            if (PhantomCombatMimicAbility.playPhantomAttacks.Count == 10)
+            if (PhantomCombatMimicAbility.playPhantomAttacks.Count == 9)
             {
                 onFilledPhantomMimicCommandMeter?.Invoke();
+                //return;
                // stateMachine.effects.PlayPhantomCastingTimeEffect();
             }
-            if (PhantomCombatMimicAbility.playPhantomAttacks.Count > 10)
+          
+        }
+        if (PhantomCombatMimicAbility.isAttackReplayActive == true)
+        {
+            if (PhantomCombatMimicAbility.playPhantomAttacks.Count >= 10)
             {
                 PhantomCombatMimicAbility.SwithchPhantomController.Clear();
                 PhantomCombatMimicAbility.playPhantomAttacks.Clear();
                 // stateMachine.TestDataCollection.Clear();
             }
-            // Debug.Log("Size of list is now " + stateMachine.TestDataCollection.Count);
-            // Debug.Log("Switchables new name is" + stateMachine.fighter.switchableAnim);
         }
     }
 
@@ -395,7 +400,7 @@ public abstract class PlayerBaseState : State
         {
           //  chosenFightingStyle = 1;
             inputBuffer.Add(chosenFightingStyle);
-            Debug.Log(inputBuffer.Count);
+           // Debug.Log(inputBuffer.Count);
             return;
         }
         else

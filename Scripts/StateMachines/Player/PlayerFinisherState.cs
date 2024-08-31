@@ -30,8 +30,8 @@ public class PlayerFinisherState : PlayerBaseState
 
     public override void Enter()
     {
-        
-        stateMachine.characterController.Move(Vector3.MoveTowards(stateMachine.characterController.transform.forward, stateMachine.targeter.currentTarget.transform.position, 1.5f) * Time.deltaTime);
+        // edit the move code so it happens faster? and more accurately 
+        stateMachine.characterController.Move(Vector3.MoveTowards(stateMachine.characterController.transform.forward, stateMachine.targeter.currentTarget.transform.position, 0.05f) * Time.deltaTime);
         FaceTarget();
         // To avoid messing with script timings and to get around camera triggering late I will have two more event actions specifically for the camera. 
         OnPlayerFinisherCamera?.Invoke(stateMachine.targeter.currentTarget.transform); // call for finisher camera 

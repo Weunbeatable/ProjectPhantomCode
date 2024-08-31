@@ -24,6 +24,7 @@ public class AirHitState : EnemyBaseState
 
     public override void Enter()
     {
+        stateMachine.navMesh.enabled = false;
         stateMachine.health.onTakeDamage += HandleTakeDamage;
         momentum = stateMachine.characterController.velocity;
         momentum = Vector3.zero;

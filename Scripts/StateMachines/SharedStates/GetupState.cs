@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class GetupState : EnemyBaseState
 {
@@ -16,6 +17,7 @@ public class GetupState : EnemyBaseState
 
     public override void Enter()
     {
+        stateMachine.navMesh.enabled = false;
         stateMachine.health.setInVulnerable(true);
         stateMachine.Animator.CrossFadeInFixedTime(getUpHash, CrossFadeDuration);
     }
@@ -31,6 +33,10 @@ public class GetupState : EnemyBaseState
     }
     public override void Exit()
     {
+        stateMachine.navMesh.enabled = true;
+        stateMachine.navMesh.updatePosition = true;
+        stateMachine.navMesh.updateRotation = true;
+        stateMachine.navMesh.ResetPath();
         stateMachine.health.setInVulnerable(false);
     }
 

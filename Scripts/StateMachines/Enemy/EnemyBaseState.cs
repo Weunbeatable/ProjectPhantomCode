@@ -9,6 +9,14 @@ public abstract class EnemyBaseState : State
     {
         this.stateMachine = stateMachine;
     }
+    protected bool IsInSuspicionRange()
+    {
+        if (stateMachine.player.isDead) { return false; } // not in range to attack or chase if player dies
+
+        float rangeToPlayer = Vector3.Distance(stateMachine.transform.position, stateMachine.player.transform.position);
+
+            return rangeToPlayer <= stateMachine.PlayerSuspicionRange;
+    }
     protected bool IsInChasingRange()
     {
         if (stateMachine.player.isDead) { return false; } // not in range to attack or chase if player dies

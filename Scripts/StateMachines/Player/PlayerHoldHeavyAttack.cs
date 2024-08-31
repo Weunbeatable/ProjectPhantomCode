@@ -41,7 +41,7 @@ public class PlayerHoldHeavyAttack : PlayerBaseState
     public override void Enter()
     {
         //MoveToEnemy();
-        FaceTarget();
+        
         stateMachine.UpdateHitState();
         if (attack.ComboStateIndex == -1)
         {
@@ -49,14 +49,18 @@ public class PlayerHoldHeavyAttack : PlayerBaseState
         }
         stateMachine.isStartingComboCounter = false;
         attackCounter = 0;
+        FaceTarget();
+        stateMachine.Animator.applyRootMotion = true;
+
         TriggerLastHitExaggeration();
         stateMachine.SetUpAttacks(attack);
         
         stateMachine.Animator.CrossFadeInFixedTime(attack.AnimationName, attack.TransitionDuration); // crossfade in fixed time is better than play so we get smootheranimations
 
-        MoveTowardsTarget();
+        
         PhantomAttackHandler(attack);
-        stateMachine.Animator.applyRootMotion = true;
+        MoveTowardsTarget();
+       
         
         //  playStoredAttacks();
     }

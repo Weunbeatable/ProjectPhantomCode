@@ -191,4 +191,8 @@ public class PlayerHoldAirHeavyAttack : PlayerBaseState
 
         return cameraForward * stateMachine.InputReader.MovementValue.y + cameraRight * stateMachine.InputReader.MovementValue.x;
     }
+    protected override void PhantomAttackHandler(Attack attack)
+    {
+        base.PhantomAttackHandler(attack);
+    }
 }

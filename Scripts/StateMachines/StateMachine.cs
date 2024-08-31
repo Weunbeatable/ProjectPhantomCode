@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class StateMachine : MonoBehaviour
 {
+    public static Action<State> OnInformCurrentState;
     private State currentState;
     protected State previousState;
     public void SwitchState(State newState)
@@ -11,6 +13,7 @@ public abstract class StateMachine : MonoBehaviour
         currentState?.Exit(); // checking if null just to be safe
         currentState = newState;
         currentState.Enter();
+        OnInformCurrentState?.Invoke(currentState);
         
     }
     void Update()

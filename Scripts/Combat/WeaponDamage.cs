@@ -91,7 +91,7 @@ public class WeaponDamage : MonoBehaviour
         if (other.TryGetComponent<ForceReceiver>(out ForceReceiver receiver))
         {
             Vector3 direction = (other.transform.position - myCollider.transform.position).normalized;
-            Vector3 Updirection = (other.transform.position - myCollider.transform.forward).normalized;
+            Vector3 Updirection = (other.transform.position).normalized;
             
             if (this.gameObject.tag == "Player")
             {
@@ -107,7 +107,7 @@ public class WeaponDamage : MonoBehaviour
                 if (this.triggeredHitStateData == "launcher")
                 {
                    // Updirection.x = 0f;
-                    receiver.AddVerticalForce(Updirection);
+                    receiver.AddVerticalForce(Updirection * knockback * 2f);
                 }
                 else if (this.triggeredHitStateData == "flyback")
                 {
@@ -245,7 +245,7 @@ public class WeaponDamage : MonoBehaviour
                     alreadyCollidedWith.Add(other);
                     Debug.Log("I've been parried");
                     Debug.Log(myCollider.gameObject.name); // TEST THIS WHEN YOU GET HOME!!!
-                    if(PhantomCombatMimicAbility.istapped == true)
+                    if(PhantomStealAbility.istapped == true)
                     {
                         if (other.TryGetComponent<CombatModifiers>(out CombatModifiers combatModifiers))
                         {

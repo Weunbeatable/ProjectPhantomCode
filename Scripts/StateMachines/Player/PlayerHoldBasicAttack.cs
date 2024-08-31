@@ -89,7 +89,7 @@ public class PlayerHoldBasicAttack : PlayerBaseState
     }
     public override void Enter()
     {
-        MoveToEnemy();
+        //MoveToEnemy();
         stateMachine.UpdateHitState();
         FaceTarget();
         

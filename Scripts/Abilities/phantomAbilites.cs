@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -53,17 +54,25 @@ public class phantomAbilites : BaseAbilitySystem
         ghostAnimator = GameObject.FindWithTag("Phantom").GetComponent<Animator>(); // grab animator component on player 
         playerInputs = GameObject.FindWithTag("Player").GetComponent<InputReader>();
         phantomContainer = GameObject.FindWithTag("PhantomContainer"); // GetComponent<GameObject>();
+       // phantomContainer = GameObject.FindWithTag("Phantom"); // GetComponent<GameObject>();
         targeter = GameObject.FindWithTag("Player").GetComponentInChildren<Targeter>();
         playerModifier = GameObject.FindWithTag("Player").GetComponent<CombatModifiers>();
         playerPos = GameObject.FindWithTag("Player").GetComponent<Transform>();
         SetAbilityName(this.ToString());
+        //SetTapStatus(false);
     }
 
     // Start is called before the first frame update
-    public virtual void Start()
+    private void OnEnable()
     {
+        phantomContainer = GameObject.FindWithTag("PhantomContainer"); // GetComponent<GameObject>();
         phantomContainer.transform.parent = playerPos.transform;
         phantomContainer.gameObject.SetActive(false);
+    }
+
+    public virtual void Start()
+    {
+        
     }
     // Update is called once per frame
     void Update()
@@ -93,15 +102,19 @@ public class phantomAbilites : BaseAbilitySystem
     //Can always make overloads for approach and face target methods if needed 
     protected void TurnPhantomOnandOff()
     {
-        if (ghostAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1f)
+        if (phantomContainer.gameObject != null)
         {
-            phantomContainer.gameObject.SetActive(false);
-            GetPropHandler().TurnOffAllProps(); // added specifically for combat mimic but may be refactored if issues arise from newer changes.
+            if (ghostAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1f)
+            {
+                phantomContainer.gameObject.SetActive(false);
+                GetPropHandler().TurnOffAllProps(); // added specifically for combat mimic but may be refactored if issues arise from newer changes.
+            }
+            else
+            {
+                phantomContainer.gameObject.SetActive(true);
+            }
         }
-        else
-        {
-            phantomContainer.gameObject.SetActive(true);
-        }
+        else { return; }
     }
 
     protected void ApproachTarget()
@@ -109,16 +122,38 @@ public class phantomAbilites : BaseAbilitySystem
         Vector3 offset = new Vector3(1.1f, 0f, 1.1f);
         if (GetTargeter().currentTarget != null)
         {
-            FaceTarget();
-           PhantomFighter.transform.position = Vector3.Lerp(PhantomFighter.transform.position, GetTargeter().currentTarget.transform.position, 0.02f * Time.deltaTime);
 
+            this.gameObject.transform.position = (GetTargeter().currentTarget.transform.position - new Vector3(1.0f, 0f, 0.0f)) ;
+            this.gameObject.GetComponent<Rigidbody>().MoveRotation( GetTargeter().currentTarget.transform.rotation);
+            /*            this.gameObject.gameObject.GetComponent<CharacterController>().transform.position = GetTargeter().currentTarget.transform.position - new Vector3(0f, 0f, 1.0f);
+                        this.gameObject.gameObject.GetComponent<CharacterController>().transform.position = this.gameObject.gameObject.GetComponent<CharacterController>().transform.position; 
+                       this.gameObject.gameObject.GetComponent<CharacterController>().enabled = false;*/
+            // this.transform.position = Vector3.Lerp(this.transform.position, GetTargeter().currentTarget.transform.right, 0.01f * Time.deltaTime);
+           // FaceTarget();
+                return;
+            
         }
+       
         else
         {
-            PhantomFighter.transform.position = Vector3.Lerp(PhantomFighter.transform.position, playerPos.transform.position + offset, 0.02f / Time.deltaTime);
+         
+            this.gameObject.transform.position = playerPos.transform.position + new Vector3(1.0f, 0f, 1.0f);
+        /*    this.gameObject.gameObject.GetComponent<CharacterController>().transform.position = playerPos.transform.position;// Vector3.Lerp(PhantomFighter.transform.position, playerPos.transform.position + offset, 0.02f / Time.deltaTime);
+            this.gameObject.gameObject.GetComponent<CharacterController>().transform.position = this.gameObject.gameObject.GetComponent<CharacterController>().transform.position;
+            this.gameObject.gameObject.GetComponent<CharacterController>().enabled = true;*/
+            return;
         }
     }
 
+    protected void editTapstatus()
+    {
+        if(playerInputs.isRightSpecial == true)
+        {
+        //    Debug.Log("right special status is " + playerInputs.isRightSpecial);
+            SetTap();
+          //  Debug.Log("Tap status is " + GetTapStatus());
+        }
+    }
     protected Animator GetHostAnimator() => hostAnimator;
     protected Animator GetGhostAnimator() => ghostAnimator;
 

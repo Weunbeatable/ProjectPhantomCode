@@ -37,17 +37,19 @@ public class PhantomCombatMimicAbility : phantomAbilites
     public Vector3 offset;
 
     private bool abilityTriggered;
+    private bool isGaugeFilled; 
     public static bool istapped { set; get; }
+    public static bool isAttackReplayActive { set; get; }
 
     public static PhantomCombatMimicAbility Instance;
 
     public override void Awake()
     {
         base.Awake();
-       // Debug.Log("host name is " + GetHostAnimator().name);
+        // Debug.Log("host name is " + GetHostAnimator().name);
         //   Debug.Log("ghost name is "+ GetGhostAnimator().name);
-
     }
+
     public override void Start()
     {
         base.Start();
@@ -64,63 +66,54 @@ public class PhantomCombatMimicAbility : phantomAbilites
         playPhantomAttacks.Clear();
 
         isStealActive = false;
-       /* Debug.Log("Controller name is " + GetFighterControllerName());
-        Debug.Log("Controller name is " +GetGunControllerName());
-        Debug.Log("Controller name is " + GetGreatSwordControllerName());
-        Debug.Log("Controller name is " + GetFighterControllerName());*/
+        istapped = false;
+        /* Debug.Log("Controller name is " + GetFighterControllerName());
+         Debug.Log("Controller name is " +GetGunControllerName());
+         Debug.Log("Controller name is " + GetGreatSwordControllerName());
+         Debug.Log("Controller name is " + GetFighterControllerName());*/
+        
+    }
+    private void OnEnable()
+    {
+        GetPlayerInputs().RightSpecialEvent += PhantomCombatMimicAbility_RightSpecialEvent;
+        GetPlayerInputs().RightSpecialHoldEvent += PhantomCombatMimicAbility_RightSpecialHoldEvent;
     }
 
-    private void Update()
+    
+
+    private void OnDisable()
     {
-        TurnPhantomOnandOff();
-        if (GetTapStatus() == true && PhantomAttacks.Count < 1) //Input.GetKeyDown(KeyCode.Z)
-        {
-            istapped = !istapped;
-        }
-        // if you are recording attacks invoke an event that triggers the greyscaled component
-        // Once you get to 10 attacks should play a clock sound
-        string currentvalue, controllerCurrentValue;
-        if (SwithchPhantomController.Count == 10)
-        {
-            for (int i = 0; i < SwithchPhantomController.Count; i++)
-            {
-                if (PhantomControllers.Count <= 10)
-                {
-                    controllerCurrentValue = SwithchPhantomController[i];
-                    PhantomControllers.Enqueue(controllerCurrentValue);
-                }
+        GetPlayerInputs().RightSpecialEvent -= PhantomCombatMimicAbility_RightSpecialEvent;
+        GetPlayerInputs().RightSpecialHoldEvent -= PhantomCombatMimicAbility_RightSpecialHoldEvent;
+    }
+    private void PhantomCombatMimicAbility_RightSpecialEvent()
+    {
+        Debug.Log("is tapped status is " + istapped);
+        //  SetTapStatus(!GetTapStatus());
+        EnableRecording();
 
+        TriggerPhantomAttack();
+    }
+    private void PhantomCombatMimicAbility_RightSpecialHoldEvent()
+    {
+        SetHoldStatus(!GetHoldStatus());
+        
+    }
+    private void TriggerPhantomAttack()
+    {
+        if (isAttackReplayActive == true)
+        {
+            if (PhantomControllers.Count <= 0)
+            {
+                isAttackReplayActive = false;
+                istapped = true;
+                return;
             }
-        }
-        if (playPhantomAttacks.Count == 10)
-        {
-            for (int i = 0; i < playPhantomAttacks.Count; i++)
+            else
             {
-                if (PhantomAttacks.Count <= 10)
-                {
-                    currentvalue = playPhantomAttacks[i];
-                    PhantomAttacks.Enqueue(currentvalue);
-                }
-
-            }
-        }
-        if (playPhantomAttacks.Count > 10) { return; } // Prevent overloading the container, may not be necessary as container is cleared in attacking states but added as a precautionary measure. 
-
-        if (PhantomAttacks.Count <= 9)
-        {
-            GetPhantomContainer().transform.parent = null;
-
-
-        }
-        if (GetHoldStatus() == true) //Input.GetKeyDown(KeyCode.X
-        {
-
-            Debug.Log("attak count is " + PhantomAttacks.Count);
-            if (PhantomAttacks.Count > 0)
-            {
-
-                //  triggerPhantom.PlayPhantomCastingTimeEffect();
                 ApproachTarget();
+                //  triggerPhantom.PlayPhantomCastingTimeEffect();
+                GetGhostAnimator().applyRootMotion = true;
                 currentAnimatorControllerManagment();
                 // phantomContainer.gameObject.SetActive(true);
 
@@ -128,15 +121,101 @@ public class PhantomCombatMimicAbility : phantomAbilites
 
                 if (GetGhostAnimator().GetCurrentAnimatorStateInfo(0).normalizedTime > 1f)
                 {
+
+                    FaceTarget();
+                    transform.position = transform.position;
                     NextAnimatorControllerManagment(); // first check the state of the controller, make a change if necessary
+
                     GetGhostAnimator().Play(PhantomAttacks.Dequeue()); // play attack
+
                     PhantomControllers.Dequeue(); // remove item from controller that we peeked at
-                    //phantomContainer.transform.parent = playerPos.transform; // phantom positioning
+                                                  //phantomContainer.transform.parent = playerPos.transform; // phantom positioning
                 }
                 //
             }
         }
+      
+    }
 
+    private void EnableRecording()
+    {
+        if (playPhantomAttacks.Count <= 10) // as long as the queue hasn't been filled up yet
+        {
+            SetTapStatus(!GetTapStatus());
+            istapped = !istapped;
+            
+        }
+        if(playPhantomAttacks.Count > 9)
+        {
+            istapped = false;
+            isAttackReplayActive = true;
+            return;
+        }
+        
+    }
+
+    private void Update()
+    {
+        if(PhantomControllers.Count == 9)
+        {
+            isGaugeFilled = true;
+        }
+        // Debug.Log("stored phantom attacks count is  " +  playPhantomAttacks.Count);
+        if (GetPhantomContainer() != null)
+        {
+            TurnPhantomOnandOff();
+        }
+        editTapstatus();
+        SetHoldStatus(GetPlayerInputs().isRightSpecialHold);
+        /*if (GetTapStatus() == true && PhantomAttacks.Count < 1) //Input.GetKeyDown(KeyCode.Z)
+        {
+            istapped = !istapped;
+        }*/
+        // if you are recording attacks invoke an event that triggers the greyscaled component
+        // Once you get to 10 attacks should play a clock sound
+        //  if (GetTapStatus() == true && playPhantomAttacks.Count <= 10)
+        FillUpQueues();
+        if (Input.GetKeyDown(KeyCode.L)) { TriggerPhantomAttack(); }
+
+    }
+
+    private void FillUpQueues()
+    {
+      
+            string currentvalue, controllerCurrentValue;
+            if (SwithchPhantomController.Count == 10) // once 10 controllers have been recorded
+            {
+                for (int i = 0; i < SwithchPhantomController.Count; i++) // string values of anmiator names
+                {
+                    if (PhantomControllers.Count <= 10)
+                    {
+                        controllerCurrentValue = SwithchPhantomController[i];
+                        PhantomControllers.Enqueue(controllerCurrentValue);
+                    }
+
+                }
+            }
+            if (playPhantomAttacks.Count == 10) // once 10 attack animations have been recorded
+            {
+                for (int i = 0; i < playPhantomAttacks.Count; i++)
+                {
+                    if (PhantomAttacks.Count <= 10)
+                    {
+                        currentvalue = playPhantomAttacks[i];
+                        PhantomAttacks.Enqueue(currentvalue);
+                    }
+
+                }
+            }
+
+            if (playPhantomAttacks.Count == 10) { return; } // Prevent overloading the container, may not be necessary as container is cleared in attacking states but added as a precautionary measure. 
+
+         /*   if (PhantomAttacks.Count <= 9)
+            {
+                GetPhantomContainer().transform.parent = null;
+            }
+        
+        else { return; }*/
     }
 
     public override string GetAbilityName()
@@ -217,9 +296,7 @@ public class PhantomCombatMimicAbility : phantomAbilites
             }
             // peek the next controller if the next controller name is different switch animation controllers before returning to top 
             // of loop
-    }
-
-
+    }  
     private void MimicLogic()
     {
         // button swap
@@ -292,6 +369,7 @@ public class PhantomCombatMimicAbility : phantomAbilites
 
         // Code has been reduced from 200 lines to 69 :D
     }
+
 
     private void IsMimicActivated()
     {
